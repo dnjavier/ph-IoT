@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "@slack/client": "^3.10.0",
+    "onoff": "^1.1.8",
     "winston": "^2.3.1"
   }
 }
