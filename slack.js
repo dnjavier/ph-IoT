@@ -10,20 +10,19 @@ let channel = env.slack.channelId;
 let connected;
 let rtm;
 
-var tryToConnect = function() {
+let tryToConnect = () => {
   if (bot_token) {
     rtm = new RtmClient(bot_token);
 
     rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, (rtmStartData) => {
       if(!channel) {
-        for (var c of rtmStartData.channels) {
-          if (c.name ===env.slack.channelName) { channel = c.id }
-        }
+        for (let c of rtmStartData.channels)
+          if (c.name ===env.slack.channelName) channel = c.id;
       }
     });
 
     // you need to wait for the client to fully connect before you can send messages
-    rtm.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, function () {
+    rtm.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, () => {
       connected = true;
       rtm.sendMessage("I'm online!", channel);
     });
@@ -49,6 +48,10 @@ var tryToConnect = function() {
         rtm.sendMessage("Lights will stop blinking", channel);
         rpi.endBlink();
       }
+
+      if(message.text.toLowerCase().indexOf('lights details') >= 0){
+        rtm.sendMessage("Lights have been on for: " + rpi.lightDetails().timeOn + " seconds and have been toggled: "+rpi.lightDetails().toggleCount + " times.", channel);
+      }
     });
 
     rtm.start();
@@ -56,7 +59,7 @@ var tryToConnect = function() {
 }
 tryToConnect();
 
-exports.sendMessage = function (message) {
+exports.sendMessage = (message) => {
   if (connected) {
     rtm.sendMessage(message, channel);
   } else {
