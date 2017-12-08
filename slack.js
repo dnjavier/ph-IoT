@@ -5,8 +5,8 @@ var winston = require('winston');
 var env = require('./.env.json');
 
 var Gpio = require('onoff').Gpio; //include onoff to interact with the GPIO
-var LED = new Gpio(2, 'out'); //use GPIO pin 2, and specify that it is output
-var blinkInterval = setInterval(blinkLED, 1000); //run the blinkLED function every 250ms
+var LED = new Gpio(2, 'out'); //use GPIO pin 4, and specify that it is output
+var blinkInterval = setInterval(blinkLED, 500); //run the blinkLED function every 250ms
 
 var bot_token = env.slack.token || '';
 var channel = env.slack.channelId;
@@ -33,8 +33,14 @@ var tryToConnect = function() {
 
     rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
       winston.info(message);
-      if(message.text.indexOf('the best') >= 0){
-        rtm.sendMessage("I'm the best!", channel);
+      if(message.text.indexOf('lights on') >= 0){
+        rtm.sendMessage("Lights will be on", channel);
+        LED.writeSync(1);
+      }
+
+      if(message.text.indexOf('lights off') >= 0){
+        rtm.sendMessage("Lights will be off", channel);
+        LED.writeSync(0);
       }
     });
 
@@ -63,7 +69,7 @@ function blinkLED() { //function to start blinking
 function endBlink() { //function to stop blinking
   clearInterval(blinkInterval); // Stop blink intervals
   LED.writeSync(0); // Turn LED off
-  LED.unexport(); // Unexport GPIO to free resources
+  //LED.unexport(); // Unexport GPIO to free resources
 }
 
 setTimeout(endBlink, 5000); //stop blinking after 5 seconds
