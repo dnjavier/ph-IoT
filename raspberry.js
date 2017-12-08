@@ -1,0 +1,31 @@
+const Gpio = require('onoff').Gpio; //include onoff to interact with the GPIO
+
+let LED = new Gpio(2, 'out'); //use GPIO pin 2, and specify that it is output
+let blinkInterval;
+
+module.exports = {
+  toggleLED: (value) => {
+    if(value === 1 || value === 0){
+      LED.writeSync(value);
+    } else if(LED.readSync() === 0) { //check the pin state, if the state is 0 (or off)
+      LED.writeSync(1); //set pin state to 1 (turn LED on)
+    } else {
+      LED.writeSync(0); //set pin state to 0 (turn LED off)
+    }
+  },
+
+  blinkLED: (time) => {
+    if(!time){
+      time = 1000;
+    }
+    blinkInterval = setInterval(module.exports.toggleLED, time); //run the blinkLED function every 500ms
+  },
+
+  endBlink: () => {
+    if(blinkInterval){
+      clearInterval(blinkInterval); // Stop blink intervals
+      LED.writeSync(0); // Turn LED off
+      //LED.unexport(); // Unexport GPIO to free resources
+    }
+  },
+};

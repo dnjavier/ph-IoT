@@ -1,17 +1,14 @@
-var RtmClient = require('@slack/client').RtmClient;
-var CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
-var RTM_EVENTS = require('@slack/client').RTM_EVENTS;
-var winston = require('winston');
-var env = require('./.env.json');
+const RtmClient = require('@slack/client').RtmClient;
+const CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
+const RTM_EVENTS = require('@slack/client').RTM_EVENTS;
+const winston = require('winston');
+const env = require('./.env.json');
+const rpi = require('./raspberry');
 
-var Gpio = require('onoff').Gpio; //include onoff to interact with the GPIO
-var LED = new Gpio(2, 'out'); //use GPIO pin 4, and specify that it is output
-var blinkInterval = setInterval(blinkLED, 500); //run the blinkLED function every 250ms
-
-var bot_token = env.slack.token || '';
-var channel = env.slack.channelId;
-var connected;
-var rtm;
+let bot_token = env.slack.token || '';
+let channel = env.slack.channelId;
+let connected;
+let rtm;
 
 var tryToConnect = function() {
   if (bot_token) {
@@ -33,14 +30,24 @@ var tryToConnect = function() {
 
     rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
       winston.info(message);
-      if(message.text.indexOf('lights on') >= 0){
+      if(message.text.toLowerCase().indexOf('lights on') >= 0){
         rtm.sendMessage("Lights will be on", channel);
-        LED.writeSync(1);
+        rpi.toggleLED(1);
       }
 
-      if(message.text.indexOf('lights off') >= 0){
+      if(message.text.toLowerCase().indexOf('lights off') >= 0){
         rtm.sendMessage("Lights will be off", channel);
-        LED.writeSync(0);
+        rpi.toggleLED(0);
+      }
+
+      if(message.text.toLowerCase().indexOf('start blinking') >= 0){
+        rtm.sendMessage("Lights will be blinking", channel);
+        rpi.blinkLED();
+      }
+
+      if(message.text.toLowerCase().indexOf('stop blinking') >= 0){
+        rtm.sendMessage("Lights will stop blinking", channel);
+        rpi.endBlink();
       }
     });
 
@@ -57,19 +64,3 @@ exports.sendMessage = function (message) {
     tryToConnect();
   }
 }
-
-function blinkLED() { //function to start blinking
-  if (LED.readSync() === 0) { //check the pin state, if the state is 0 (or off)
-    LED.writeSync(1); //set pin state to 1 (turn LED on)
-  } else {
-    LED.writeSync(0); //set pin state to 0 (turn LED off)
-  }
-}
-
-function endBlink() { //function to stop blinking
-  clearInterval(blinkInterval); // Stop blink intervals
-  LED.writeSync(0); // Turn LED off
-  //LED.unexport(); // Unexport GPIO to free resources
-}
-
-setTimeout(endBlink, 5000); //stop blinking after 5 seconds
