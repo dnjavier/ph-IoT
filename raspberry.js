@@ -18,11 +18,11 @@ module.exports = {
       if(L===1){
         prevTime = new Date();
       }
-    } else if(LED.readSync() === 0) { //check the pin state, if the state is 0 (or off)
-      LED.writeSync(1); //set pin state to 1 (turn LED on)
+    } else if(LED.readSync() === 0) { //check if LED is off      
+      LED.writeSync(1); // Turn LED on
       prevTime = new Date();
-    } else {
-      LED.writeSync(0); //set pin state to 0 (turn LED off)
+    } else {      
+      LED.writeSync(0); // Turn LED off
     }
     toggleCount++;
   },
@@ -36,10 +36,11 @@ module.exports = {
 
   endBlink: () => {
     if(blinkInterval){
-      clearInterval(blinkInterval); // Stop blink intervals
-      //LED.unexport(); // Unexport GPIO to free resources
+      clearInterval(blinkInterval);
+      // Unexport GPIO to free resources
+      //LED.unexport(); 
     }
-    rpi.toggleLED(0);
+    module.exports.toggleLED(0);
   },
 
   lightDetails: () => {
