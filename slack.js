@@ -39,8 +39,8 @@ let tryToConnect = () => {
         rpi.blinkLED();
       }
 
-      if(message.text.toLowerCase().indexOf('detener parpadeo') >= 0){
-        rtm.sendMessage("La luz dejará de parpadear", channel);
+      if(message.text.toLowerCase().indexOf('apagar luz') >= 0){
+        rtm.sendMessage("La luz se apagará", channel);
         rpi.endBlink();
       }
 
