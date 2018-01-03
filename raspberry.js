@@ -37,6 +37,7 @@ module.exports = {
   endBlink: () => {
     if(blinkInterval){
       clearInterval(blinkInterval);
+      blinkInterval = null;
       // Unexport GPIO to free resources
       //LED.unexport(); 
     }

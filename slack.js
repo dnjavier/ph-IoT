@@ -34,11 +34,6 @@ let tryToConnect = () => {
         rpi.toggleLED(1);
       }
 
-      if(message.text.toLowerCase().indexOf('apagar luz') >= 0){
-        rtm.sendMessage("La luz se apagará", channel);
-        rpi.toggleLED(0);
-      }
-
       if(message.text.toLowerCase().indexOf('parpadear luz') >= 0){
         rtm.sendMessage("La luz parpadeará", channel);
         rpi.blinkLED();
