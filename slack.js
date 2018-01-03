@@ -24,33 +24,33 @@ let tryToConnect = () => {
     // you need to wait for the client to fully connect before you can send messages
     rtm.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, () => {
       connected = true;
-      rtm.sendMessage("I'm online!", channel);
+      rtm.sendMessage("Rpi conectado!", channel);
     });
 
     rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
       winston.info(message);
-      if(message.text.toLowerCase().indexOf('lights on') >= 0){
-        rtm.sendMessage("Lights will be on", channel);
+      if(message.text.toLowerCase().indexOf('encender luz') >= 0){
+        rtm.sendMessage("La luz se encenderá", channel);
         rpi.toggleLED(1);
       }
 
-      if(message.text.toLowerCase().indexOf('lights off') >= 0){
-        rtm.sendMessage("Lights will be off", channel);
+      if(message.text.toLowerCase().indexOf('apagar luz') >= 0){
+        rtm.sendMessage("La luz se apagará", channel);
         rpi.toggleLED(0);
       }
 
-      if(message.text.toLowerCase().indexOf('start blinking') >= 0){
-        rtm.sendMessage("Lights will be blinking", channel);
+      if(message.text.toLowerCase().indexOf('parpadear luz') >= 0){
+        rtm.sendMessage("La luz parpadeará", channel);
         rpi.blinkLED();
       }
 
-      if(message.text.toLowerCase().indexOf('stop blinking') >= 0){
-        rtm.sendMessage("Lights will stop blinking", channel);
+      if(message.text.toLowerCase().indexOf('detener parpadeo') >= 0){
+        rtm.sendMessage("La luz dejará de parpadear", channel);
         rpi.endBlink();
       }
 
-      if(message.text.toLowerCase().indexOf('lights details') >= 0){
-        rtm.sendMessage("Lights have been on for: " + rpi.lightDetails().timeOn + " seconds and have been toggled: "+rpi.lightDetails().toggleCount + " times.", channel);
+      if(message.text.toLowerCase().indexOf('detalles') >= 0){
+        rtm.sendMessage("La luz ha estado encendida: " + rpi.lightDetails().timeOn + " segundos y ha cambiado el estado: "+rpi.lightDetails().toggleCount + " veces.", channel);
       }
     });
 
