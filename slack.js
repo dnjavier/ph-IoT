@@ -36,12 +36,17 @@ let tryToConnect = () => {
 
       if(message.text.toLowerCase().indexOf('apagar luz') >= 0){
         rtm.sendMessage("La luz se apagará", channel);
-        rpi.blinkLED();
+        rpi.toggleLED(0);
       }
 
       if(message.text.toLowerCase().indexOf('parpadear luz') >= 0){
         rtm.sendMessage("La luz parpadeará", channel);
         rpi.blinkLED();
+      }
+
+      if(message.text.toLowerCase().indexOf('detener parpadeo') >= 0){
+        rtm.sendMessage("La luz dejará de parpadear", channel);
+        rpi.endBlink();
       }
 
       if(message.text.toLowerCase().indexOf('detalles') >= 0){
