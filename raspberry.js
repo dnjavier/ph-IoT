@@ -3,28 +3,28 @@ let LED = new Gpio(2, 'out'); //use GPIO pin 2, and specify that it is output
 
 let blinkInterval;
 let toggleCount = 0;
-let timeOn = 0;
-let prevTime;
-let L = 0;
+//let L = 0; //DEBUG
+
+//Timer
+let start, end, ledState, timeOn = 0;
 
 module.exports = {
   toggleLED: (value) => {
-    if(prevTime){
-        timeOn += countTime()/1000;
-    }
-
     if(value === 1 || value === 0){
       LED.writeSync(value);
-      if(L===1){
-        prevTime = new Date();
-      }
-    } else if(LED.readSync() === 0) { //check if LED is off      
+      //L = value;
+
+    } else if(LED.readSync() === 0) { //check if LED is off    
+    //} else if(L === 0) {  
       LED.writeSync(1); // Turn LED on
-      prevTime = new Date();
+      //L = 1;
     } else {      
       LED.writeSync(0); // Turn LED off
+      //L = 0;
     }
     toggleCount++;
+    countTime(LED.readSync());
+    //countTime(L);
   },
 
   blinkLED: (time) => {
@@ -47,16 +47,22 @@ module.exports = {
   lightDetails: () => {
     return {
       toggleCount: toggleCount,
-      timeOn: timeOn + countTime()/1000,
+      timeOn: Math.round(timeOn),
     }
   }
 };
 
-function countTime(){
-  let time = new Date();
-  currentTimeOn = 0;
-  if(L===1){
-    currentTimeOn = time - prevTime;
+function countTime(timeLed) {
+  //state has not changed
+  if(ledState == timeLed){
+    return;
   }
-  return currentTimeOn;
+  ledState = timeLed;
+
+  if(timeLed == 1){
+    start = new Date().getTime();
+  } else {
+    end = new Date().getTime();
+    timeOn += (end - start)/1000;
+  }
 }
