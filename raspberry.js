@@ -3,7 +3,6 @@ let LED = new Gpio(2, 'out'); //use GPIO pin 2, and specify that it is output
 
 let blinkInterval;
 let toggleCount = 0;
-//let L = 0; //DEBUG
 
 //Timer
 let start, end, ledState, timeOn = 0;
@@ -12,19 +11,14 @@ module.exports = {
   toggleLED: (value) => {
     if(value === 1 || value === 0){
       LED.writeSync(value);
-      //L = value;
 
     } else if(LED.readSync() === 0) { //check if LED is off    
-    //} else if(L === 0) {  
       LED.writeSync(1); // Turn LED on
-      //L = 1;
     } else {      
       LED.writeSync(0); // Turn LED off
-      //L = 0;
     }
     toggleCount++;
-    countTime(LED.readSync());
-    //countTime(L);
+    timer(LED.readSync());
   },
 
   blinkLED: (time) => {
@@ -52,7 +46,7 @@ module.exports = {
   }
 };
 
-function countTime(timeLed) {
+function timer(timeLed) {
   //state has not changed
   if(ledState == timeLed){
     return;
