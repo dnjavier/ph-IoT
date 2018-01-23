@@ -17,7 +17,7 @@ let tryToConnect = () => {
     rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, (rtmStartData) => {
       if(!channel) {
         for (let c of rtmStartData.channels)
-          if (c.name ===env.slack.channelName) channel = c.id;
+          if (c.name === env.slack.channelName) channel = c.id;
       }
     });
 
@@ -28,6 +28,7 @@ let tryToConnect = () => {
     });
 
     rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
+      channel = message.channel;
       winston.info(message);
       if(message.text.toLowerCase().indexOf('encender luz') >= 0){
         rtm.sendMessage("La luz se encenderá", channel);
